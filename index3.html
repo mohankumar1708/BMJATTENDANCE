@@ -1,0 +1,3890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMJ & Company - Attendance System</title>
+
+<style>
+
+/* =========================================================
+   RESET
+========================================================= */
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#f3f4f6;
+    color:#1f2937;
+}
+
+button{
+    border:none;
+    border-radius:8px;
+    padding:10px 15px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+button:hover{
+    opacity:.9;
+}
+
+input,
+select{
+    width:100%;
+    padding:10px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    font-size:14px;
+    background:white;
+}
+
+label{
+    display:block;
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+#loginPage{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(
+        135deg,
+        #111827,
+        #374151
+    );
+}
+
+.login-box{
+    width:410px;
+    max-width:92%;
+    background:white;
+    padding:35px;
+    border-radius:18px;
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+
+.logo{
+    text-align:center;
+    font-size:30px;
+    font-weight:bold;
+}
+
+.logo span{
+    color:#eab308;
+}
+
+.login-subtitle{
+    text-align:center;
+    color:#6b7280;
+    margin-top:8px;
+    margin-bottom:25px;
+}
+
+.login-box input{
+    margin-bottom:15px;
+}
+
+.login-button{
+    width:100%;
+    background:#111827;
+    color:white;
+    font-size:16px;
+}
+
+.login-error{
+    color:#dc2626;
+    text-align:center;
+    margin-top:12px;
+}
+
+.demo-login{
+    text-align:center;
+    margin-top:18px;
+    color:#6b7280;
+    font-size:13px;
+    line-height:1.8;
+}
+
+
+/* =========================================================
+   APPLICATION
+========================================================= */
+
+#app{
+    display:none;
+}
+
+header{
+    height:65px;
+    background:#111827;
+    color:white;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 25px;
+}
+
+.header-logo{
+    font-size:23px;
+    font-weight:bold;
+}
+
+.header-logo span{
+    color:#eab308;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.user-badge{
+    background:#374151;
+    padding:8px 14px;
+    border-radius:20px;
+    font-size:13px;
+}
+
+.logout{
+    background:#dc2626;
+    color:white;
+}
+
+
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+.layout{
+    display:flex;
+    min-height:calc(100vh - 65px);
+}
+
+.sidebar{
+    width:235px;
+    background:#1f2937;
+    padding:15px 10px;
+}
+
+.sidebar button{
+    width:100%;
+    text-align:left;
+    background:transparent;
+    color:#d1d5db;
+    margin-bottom:5px;
+}
+
+.sidebar button:hover,
+.sidebar button.active{
+    background:#374151;
+    color:white;
+}
+
+.main{
+    flex:1;
+    min-width:0;
+    padding:25px;
+}
+
+
+/* =========================================================
+   PAGES
+========================================================= */
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+.page-title{
+    margin-bottom:22px;
+}
+
+.page-title h1{
+    font-size:28px;
+}
+
+.page-title p{
+    color:#6b7280;
+    margin-top:6px;
+}
+
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:22px;
+}
+
+.card{
+    background:white;
+    border:1px solid #e5e7eb;
+    border-radius:14px;
+    padding:20px;
+}
+
+.card-title{
+    color:#6b7280;
+    font-size:14px;
+}
+
+.card-value{
+    font-size:30px;
+    font-weight:bold;
+    margin-top:8px;
+}
+
+
+/* =========================================================
+   PANELS
+========================================================= */
+
+.panel{
+    background:white;
+    border:1px solid #e5e7eb;
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.panel-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:18px;
+}
+
+
+/* =========================================================
+   FORM GRID
+========================================================= */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.attendance-controls{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:20px;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-container{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:950px;
+}
+
+th,
+td{
+    padding:11px;
+    border-bottom:1px solid #e5e7eb;
+    text-align:left;
+    vertical-align:middle;
+}
+
+th{
+    background:#f9fafb;
+    white-space:nowrap;
+}
+
+td input,
+td select{
+    min-width:110px;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.primary{
+    background:#111827;
+    color:white;
+}
+
+.success{
+    background:#16a34a;
+    color:white;
+}
+
+.blue{
+    background:#2563eb;
+    color:white;
+}
+
+.warning{
+    background:#f59e0b;
+    color:white;
+}
+
+.danger{
+    background:#dc2626;
+    color:white;
+}
+
+.gray{
+    background:#e5e7eb;
+    color:#111827;
+}
+
+.action-btn{
+    padding:7px 10px;
+    font-size:12px;
+    margin:2px;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-P{
+    color:#15803d;
+    font-weight:bold;
+}
+
+.status-A{
+    color:#dc2626;
+    font-weight:bold;
+}
+
+.status-HD{
+    color:#d97706;
+    font-weight:bold;
+}
+
+.status-P12{
+    color:#2563eb;
+    font-weight:bold;
+}
+
+.status-PP{
+    color:#7c3aed;
+    font-weight:bold;
+}
+
+.status-2D{
+    color:#9333ea;
+    font-weight:bold;
+}
+
+
+/* =========================================================
+   BUILDINGS
+========================================================= */
+
+.building-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.building-card{
+    background:white;
+    border:1px solid #e5e7eb;
+    border-radius:15px;
+    padding:25px;
+}
+
+.building-icon{
+    font-size:40px;
+    margin-bottom:12px;
+}
+
+.building-card p{
+    color:#6b7280;
+    margin-top:8px;
+}
+
+
+/* =========================================================
+   INFORMATION BOX
+========================================================= */
+
+.info-box{
+    background:#f9fafb;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    padding:16px;
+    margin-bottom:20px;
+    line-height:1.8;
+}
+
+.info-box strong{
+    display:block;
+    margin-bottom:5px;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+
+    justify-content:center;
+    align-items:center;
+
+    padding:20px;
+    z-index:1000;
+}
+
+.modal-box{
+    width:650px;
+    max-width:100%;
+    background:white;
+    border-radius:16px;
+    padding:25px;
+}
+
+.modal-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:20px;
+}
+
+
+/* =========================================================
+   FILTER BOX
+========================================================= */
+
+.filter-summary{
+    background:#111827;
+    color:white;
+    border-radius:9px;
+    padding:11px 15px;
+    margin-bottom:15px;
+    font-size:14px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:1100px){
+
+    .attendance-controls{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .cards{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .building-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+
+@media(max-width:700px){
+
+    header{
+        padding:0 12px;
+    }
+
+    .layout{
+        display:block;
+    }
+
+    .sidebar{
+        width:100%;
+        display:flex;
+        overflow-x:auto;
+        padding:8px;
+    }
+
+    .sidebar button{
+        min-width:125px;
+        margin-right:5px;
+    }
+
+    .main{
+        padding:15px;
+    }
+
+    .form-grid,
+    .attendance-controls{
+        grid-template-columns:1fr;
+    }
+
+    .cards{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .header-right .user-badge{
+        display:none;
+    }
+}
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+@media print{
+
+    header,
+    .sidebar,
+    button{
+        display:none !important;
+    }
+
+    .main{
+        padding:0;
+    }
+
+    .panel{
+        border:none;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     LOGIN PAGE
+===================================================== -->
+
+<div id="loginPage">
+
+    <div class="login-box">
+
+        <div class="logo">
+            BMJ <span>&</span> COMPANY
+        </div>
+
+        <div class="login-subtitle">
+            Construction Labour Attendance System
+        </div>
+
+
+        <label>
+            Username
+        </label>
+
+        <input
+            type="text"
+            id="username"
+            placeholder="Enter username"
+        >
+
+
+        <label>
+            Password
+        </label>
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Enter password"
+        >
+
+
+        <button
+            class="login-button"
+            onclick="login()"
+        >
+            Login
+        </button>
+
+
+        <div
+            id="loginError"
+            class="login-error"
+        ></div>
+
+
+        <div class="demo-login">
+
+            Admin:
+            <b>admin / 1234</b>
+            <br>
+
+            Supervisor:
+            <b>supervisor / 1234</b>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     APPLICATION
+===================================================== -->
+
+<div id="app">
+
+
+<header>
+
+    <div class="header-logo">
+        BMJ <span>&</span> COMPANY
+    </div>
+
+
+    <div class="header-right">
+
+        <span
+            id="userBadge"
+            class="user-badge"
+        ></span>
+
+
+        <button
+            class="logout"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<div class="layout">
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<nav class="sidebar">
+
+
+    <button
+        class="active"
+        data-page="dashboard"
+        onclick="showPage('dashboard',this)"
+    >
+        📊 Dashboard
+    </button>
+
+
+    <button
+        data-page="attendance"
+        onclick="showPage('attendance',this)"
+    >
+        📝 Attendance
+    </button>
+
+
+    <button
+        data-page="labourers"
+        onclick="showPage('labourers',this)"
+    >
+        👷 Labourers
+    </button>
+
+
+    <button
+        data-page="buildings"
+        data-admin="true"
+        onclick="showPage('buildings',this)"
+    >
+        🏢 Buildings
+    </button>
+
+
+    <button
+        data-page="weekly"
+        onclick="showPage('weekly',this)"
+    >
+        📅 7-Day Sheet
+    </button>
+
+
+    <button
+        data-page="reports"
+        data-admin="true"
+        onclick="showPage('reports',this)"
+    >
+        📈 Reports
+    </button>
+
+
+</nav>
+
+
+
+<main class="main">
+
+
+<!-- =====================================================
+     DASHBOARD
+===================================================== -->
+
+<section
+    id="dashboard"
+    class="page active"
+>
+
+    <div class="page-title">
+
+        <h1>
+            Dashboard
+        </h1>
+
+        <p>
+            BMJ & Company Construction Attendance
+        </p>
+
+    </div>
+
+
+    <div class="cards">
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Total Labourers
+            </div>
+
+            <div
+                class="card-value"
+                id="totalLabourers"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Present Today
+            </div>
+
+            <div
+                class="card-value"
+                id="presentToday"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Absent Today
+            </div>
+
+            <div
+                class="card-value"
+                id="absentToday"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                OT Hours Today
+            </div>
+
+            <div
+                class="card-value"
+                id="otToday"
+            >
+                0
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="panel">
+
+
+        <div class="panel-header">
+
+            <h2>
+                Today's Attendance
+            </h2>
+
+            <button
+                class="primary"
+                onclick="goAttendance()"
+            >
+                Take Attendance
+            </button>
+
+        </div>
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Labourer
+                        </th>
+
+                        <th>
+                            Role
+                        </th>
+
+                        <th>
+                            Building
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            In
+                        </th>
+
+                        <th>
+                            Out
+                        </th>
+
+                        <th>
+                            Duty
+                        </th>
+
+                        <th>
+                            OT
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody
+                    id="dashboardTable"
+                ></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     ATTENDANCE
+===================================================== -->
+
+<section
+    id="attendance"
+    class="page"
+>
+
+    <div class="page-title">
+
+        <h1>
+            📝 Daily Attendance
+        </h1>
+
+        <p>
+            Select building and labour category
+        </p>
+
+    </div>
+
+
+    <div class="info-box">
+
+        <strong>
+            Duty Rules
+        </strong>
+
+        <b>P</b> =
+        6:00 AM → 2:00 PM =
+        1 Day
+
+        <br>
+
+        <b>P1/2</b> =
+        6:00 AM → 6:00 PM =
+        1.5 Days
+
+        <br>
+
+        <b>2D</b> =
+        6:00 AM → 10:00 PM =
+        2 Days
+
+        <br>
+
+        <b>HD</b> =
+        6:00 AM → 10:00 AM =
+        0.5 Day
+
+        <br>
+
+        <b>PP</b> =
+        6:00 AM → 2:00 PM =
+        1 Day
+
+        <br>
+
+        <b>OT is manual.</b>
+        The system will NOT automatically calculate OT.
+
+    </div>
+
+
+    <div class="panel">
+
+
+        <div class="attendance-controls">
+
+
+            <div>
+
+                <label>
+                    Date
+                </label>
+
+                <input
+                    type="date"
+                    id="attendanceDate"
+                    onchange="loadAttendance()"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Building
+                </label>
+
+                <select
+                    id="attendanceBuilding"
+                    onchange="loadAttendance()"
+                >
+
+                    <option>
+                        Building 1
+                    </option>
+
+                    <option>
+                        Building 2
+                    </option>
+
+                    <option>
+                        Building 3
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Labour Category
+                </label>
+
+                <select
+                    id="attendanceRole"
+                    onchange="loadAttendance()"
+                >
+
+                    <option value="All">
+                        All Labourers
+                    </option>
+
+                    <option value="Mason">
+                        Mason
+                    </option>
+
+                    <option value="Helper">
+                        Helper
+                    </option>
+
+                    <option value="Carpenter">
+                        Carpenter
+                    </option>
+
+                    <option value="Steel Fixer">
+                        Steel Fixer
+                    </option>
+
+                    <option value="Electrician">
+                        Electrician
+                    </option>
+
+                    <option value="Plumber">
+                        Plumber
+                    </option>
+
+                    <option value="Painter">
+                        Painter
+                    </option>
+
+                    <option value="Fabricator">
+                        Fabricator
+                    </option>
+
+                    <option value="General Labour">
+                        General Labour
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Duty
+                </label>
+
+                <input
+                    type="text"
+                    value="6:00 AM - 2:00 PM"
+                    disabled
+                >
+
+            </div>
+
+
+        </div>
+
+
+        <div
+            id="filterSummary"
+            class="filter-summary"
+        >
+            All Labourers
+        </div>
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Sl
+                        </th>
+
+                        <th>
+                            Labourer
+                        </th>
+
+                        <th>
+                            Role
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            In Time
+                        </th>
+
+                        <th>
+                            Out Time
+                        </th>
+
+                        <th>
+                            Duty
+                        </th>
+
+                        <th>
+                            OT Hours
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody
+                    id="attendanceTable"
+                ></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     LABOURERS
+===================================================== -->
+
+<section
+    id="labourers"
+    class="page"
+>
+
+    <div class="page-title">
+
+        <h1>
+            👷 Labourers
+        </h1>
+
+        <p>
+            Add workers and manage their duty times
+        </p>
+
+    </div>
+
+
+    <div class="panel">
+
+
+        <div class="panel-header">
+
+            <h2>
+                Labourer List
+            </h2>
+
+            <button
+                class="primary"
+                onclick="openLabourerModal()"
+            >
+                + Add Labourer
+            </button>
+
+        </div>
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Sl
+                        </th>
+
+                        <th>
+                            Name
+                        </th>
+
+                        <th>
+                            Role
+                        </th>
+
+                        <th>
+                            Building
+                        </th>
+
+                        <th>
+                            Phone
+                        </th>
+
+                        <th>
+                            Duty Start
+                        </th>
+
+                        <th>
+                            Duty End
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody
+                    id="labourerTable"
+                ></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     BUILDINGS
+===================================================== -->
+
+<section
+    id="buildings"
+    class="page"
+>
+
+    <div class="page-title">
+
+        <h1>
+            🏢 Buildings
+        </h1>
+
+        <p>
+            Admin building overview
+        </p>
+
+    </div>
+
+
+    <div class="building-grid">
+
+
+        <div class="building-card">
+
+            <div class="building-icon">
+                🏢
+            </div>
+
+            <h2>
+                Building 1
+            </h2>
+
+            <p id="building1Count">
+                0 Labourers
+            </p>
+
+        </div>
+
+
+        <div class="building-card">
+
+            <div class="building-icon">
+                🏢
+            </div>
+
+            <h2>
+                Building 2
+            </h2>
+
+            <p id="building2Count">
+                0 Labourers
+            </p>
+
+        </div>
+
+
+        <div class="building-card">
+
+            <div class="building-icon">
+                🏢
+            </div>
+
+            <h2>
+                Building 3
+            </h2>
+
+            <p id="building3Count">
+                0 Labourers
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     7 DAY SHEET
+===================================================== -->
+
+<section
+    id="weekly"
+    class="page"
+>
+
+    <div class="page-title">
+
+        <h1>
+            📅 7-Day Attendance
+        </h1>
+
+        <p>
+            Building-wise weekly attendance
+        </p>
+
+    </div>
+
+
+    <div class="panel">
+
+
+        <div class="form-grid">
+
+
+            <div>
+
+                <label>
+                    Week Starting
+                </label>
+
+                <input
+                    type="date"
+                    id="weekStart"
+                    onchange="generateWeekly()"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Building
+                </label>
+
+                <select
+                    id="weeklyBuilding"
+                    onchange="generateWeekly()"
+                >
+
+                    <option>
+                        Building 1
+                    </option>
+
+                    <option>
+                        Building 2
+                    </option>
+
+                    <option>
+                        Building 3
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+
+        <br>
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead
+                    id="weeklyHead"
+                ></thead>
+
+                <tbody
+                    id="weeklyBody"
+                ></tbody>
+
+            </table>
+
+        </div>
+
+
+        <br>
+
+
+        <button
+            class="primary"
+            onclick="window.print()"
+        >
+            🖨 Print 7-Day Sheet
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     REPORTS
+===================================================== -->
+
+<section
+    id="reports"
+    class="page"
+>
+
+    <div class="page-title">
+
+        <h1>
+            📈 Reports
+        </h1>
+
+        <p>
+            Admin attendance and OT summary
+        </p>
+
+    </div>
+
+
+    <div class="cards">
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Present
+            </div>
+
+            <div
+                class="card-value"
+                id="reportPresent"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Absent
+            </div>
+
+            <div
+                class="card-value"
+                id="reportAbsent"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Half Day
+            </div>
+
+            <div
+                class="card-value"
+                id="reportHalf"
+            >
+                0
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                Total OT
+            </div>
+
+            <div
+                class="card-value"
+                id="reportOT"
+            >
+                0
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="panel">
+
+        <h2>
+            Export Attendance
+        </h2>
+
+        <br>
+
+        <button
+            class="success"
+            onclick="exportCSV()"
+        >
+            📥 Export Excel / CSV
+        </button>
+
+
+        <button
+            class="primary"
+            onclick="window.print()"
+        >
+            🖨 Print
+        </button>
+
+    </div>
+
+</section>
+
+
+</main>
+
+</div>
+
+</div>
+
+
+
+<!-- =====================================================
+     ADD LABOURER MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="labourerModal"
+>
+
+    <div class="modal-box">
+
+        <h2>
+            Add Labourer
+        </h2>
+
+        <br>
+
+
+        <div class="form-grid">
+
+
+            <div>
+
+                <label>
+                    Labourer Name
+                </label>
+
+                <input
+                    id="labourerName"
+                    placeholder="Enter name"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Phone
+                </label>
+
+                <input
+                    id="labourerPhone"
+                    placeholder="Phone number"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Role
+                </label>
+
+                <select
+                    id="labourerRole"
+                >
+
+                    <option>
+                        General Labour
+                    </option>
+
+                    <option>
+                        Mason
+                    </option>
+
+                    <option>
+                        Helper
+                    </option>
+
+                    <option>
+                        Carpenter
+                    </option>
+
+                    <option>
+                        Steel Fixer
+                    </option>
+
+                    <option>
+                        Electrician
+                    </option>
+
+                    <option>
+                        Plumber
+                    </option>
+
+                    <option>
+                        Painter
+                    </option>
+
+                    <option>
+                        Fabricator
+                    </option>
+
+                    <option>
+                        Supervisor
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Building
+                </label>
+
+                <select
+                    id="labourerBuilding"
+                >
+
+                    <option>
+                        Building 1
+                    </option>
+
+                    <option>
+                        Building 2
+                    </option>
+
+                    <option>
+                        Building 3
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Normal Duty Start
+                </label>
+
+                <input
+                    type="time"
+                    id="labourerDutyStart"
+                    value="06:00"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Normal Duty End
+                </label>
+
+                <input
+                    type="time"
+                    id="labourerDutyEnd"
+                    value="14:00"
+                >
+
+            </div>
+
+
+        </div>
+
+
+        <div class="modal-actions">
+
+
+            <button
+                class="gray"
+                onclick="closeLabourerModal()"
+            >
+                Cancel
+            </button>
+
+
+            <button
+                class="primary"
+                onclick="addLabourer()"
+            >
+                Add Labourer
+            </button>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+/* =========================================================
+   DATA
+========================================================= */
+
+let labourers =
+    JSON.parse(
+        localStorage.getItem(
+            "bmjLabourers"
+        )
+    ) || [];
+
+
+let attendance =
+    JSON.parse(
+        localStorage.getItem(
+            "bmjAttendance"
+        )
+    ) || [];
+
+
+let currentUser = null;
+
+
+/* =========================================================
+   USERS
+========================================================= */
+
+const users = {
+
+    admin:{
+        username:"admin",
+        password:"1234",
+        role:"Admin"
+    },
+
+    supervisor:{
+        username:"supervisor",
+        password:"1234",
+        role:"Supervisor"
+    }
+
+};
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+function login(){
+
+    const username =
+        document
+        .getElementById("username")
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    const password =
+        document
+        .getElementById("password")
+        .value;
+
+
+    let user = null;
+
+
+    if(
+        username === users.admin.username &&
+        password === users.admin.password
+    ){
+
+        user = users.admin;
+
+    }
+
+
+    if(
+        username === users.supervisor.username &&
+        password === users.supervisor.password
+    ){
+
+        user = users.supervisor;
+
+    }
+
+
+    if(!user){
+
+        document
+        .getElementById("loginError")
+        .textContent =
+            "Invalid username or password";
+
+        return;
+
+    }
+
+
+    currentUser = user;
+
+
+    document
+    .getElementById("loginPage")
+    .style.display = "none";
+
+
+    document
+    .getElementById("app")
+    .style.display = "block";
+
+
+    document
+    .getElementById("userBadge")
+    .textContent =
+        "👤 " + user.role;
+
+
+    applyPermissions();
+
+    initialize();
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+function logout(){
+
+    currentUser = null;
+
+
+    document
+    .getElementById("app")
+    .style.display = "none";
+
+
+    document
+    .getElementById("loginPage")
+    .style.display = "flex";
+
+
+    document
+    .getElementById("username")
+    .value = "";
+
+
+    document
+    .getElementById("password")
+    .value = "";
+
+}
+
+
+/* =========================================================
+   PERMISSIONS
+========================================================= */
+
+function applyPermissions(){
+
+    const adminItems =
+        document.querySelectorAll(
+            "[data-admin='true']"
+        );
+
+
+    adminItems.forEach(
+        item => {
+
+            if(
+                currentUser.role === "Admin"
+            ){
+
+                item.style.display =
+                    "block";
+
+            }
+            else{
+
+                item.style.display =
+                    "none";
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+function initialize(){
+
+    const today =
+        getDateString();
+
+
+    document
+    .getElementById("attendanceDate")
+    .value = today;
+
+
+    document
+    .getElementById("weekStart")
+    .value =
+        getWeekStart();
+
+
+    renderLabourers();
+
+    loadAttendance();
+
+    updateDashboard();
+
+    generateWeekly();
+
+    updateReports();
+
+    updateBuildingCounts();
+
+}
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+function getDateString(
+    date = new Date()
+){
+
+    const year =
+        date.getFullYear();
+
+
+    const month =
+        String(
+            date.getMonth()+1
+        ).padStart(2,"0");
+
+
+    const day =
+        String(
+            date.getDate()
+        ).padStart(2,"0");
+
+
+    return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day
+    );
+
+}
+
+
+function getWeekStart(){
+
+    const d =
+        new Date();
+
+
+    const day =
+        d.getDay();
+
+
+    const diff =
+        day === 0
+        ? -6
+        : 1-day;
+
+
+    d.setDate(
+        d.getDate()+diff
+    );
+
+
+    return getDateString(d);
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function showPage(
+    pageId,
+    button
+){
+
+    if(
+        currentUser.role === "Supervisor" &&
+        (
+            pageId === "buildings" ||
+            pageId === "reports"
+        )
+    ){
+
+        alert(
+            "This section is available only to Admin."
+        );
+
+        return;
+
+    }
+
+
+    document
+    .querySelectorAll(".page")
+    .forEach(
+        page =>
+            page.classList.remove("active")
+    );
+
+
+    document
+    .getElementById(pageId)
+    .classList.add("active");
+
+
+    document
+    .querySelectorAll(".sidebar button")
+    .forEach(
+        btn =>
+            btn.classList.remove("active")
+    );
+
+
+    if(button){
+        button.classList.add("active");
+    }
+
+
+    if(pageId === "dashboard")
+        updateDashboard();
+
+
+    if(pageId === "attendance")
+        loadAttendance();
+
+
+    if(pageId === "labourers")
+        renderLabourers();
+
+
+    if(pageId === "weekly")
+        generateWeekly();
+
+
+    if(pageId === "reports")
+        updateReports();
+
+}
+
+
+function goAttendance(){
+
+    const button =
+        document.querySelector(
+            '[data-page="attendance"]'
+        );
+
+
+    showPage(
+        "attendance",
+        button
+    );
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function openLabourerModal(){
+
+    document
+    .getElementById("labourerModal")
+    .style.display = "flex";
+
+}
+
+
+function closeLabourerModal(){
+
+    document
+    .getElementById("labourerModal")
+    .style.display = "none";
+
+}
+
+
+/* =========================================================
+   ADD LABOURER
+========================================================= */
+
+function addLabourer(){
+
+    const name =
+        document
+        .getElementById("labourerName")
+        .value
+        .trim();
+
+
+    const phone =
+        document
+        .getElementById("labourerPhone")
+        .value
+        .trim();
+
+
+    const role =
+        document
+        .getElementById("labourerRole")
+        .value;
+
+
+    const building =
+        document
+        .getElementById("labourerBuilding")
+        .value;
+
+
+    const dutyStart =
+        document
+        .getElementById("labourerDutyStart")
+        .value;
+
+
+    const dutyEnd =
+        document
+        .getElementById("labourerDutyEnd")
+        .value;
+
+
+    if(!name){
+
+        alert(
+            "Please enter labourer name."
+        );
+
+        return;
+
+    }
+
+
+    labourers.push({
+
+        id:Date.now(),
+
+        name:name,
+
+        phone:phone,
+
+        role:role,
+
+        building:building,
+
+        dutyStart:
+            dutyStart || "06:00",
+
+        dutyEnd:
+            dutyEnd || "14:00"
+
+    });
+
+
+    saveData();
+
+
+    document
+    .getElementById("labourerName")
+    .value = "";
+
+
+    document
+    .getElementById("labourerPhone")
+    .value = "";
+
+
+    closeLabourerModal();
+
+
+    renderLabourers();
+
+    updateDashboard();
+
+    updateBuildingCounts();
+
+    loadAttendance();
+
+
+    alert(
+        "Labourer added successfully."
+    );
+
+}
+
+
+/* =========================================================
+   RENDER LABOURERS
+========================================================= */
+
+function renderLabourers(){
+
+    const table =
+        document
+        .getElementById(
+            "labourerTable"
+        );
+
+
+    table.innerHTML = "";
+
+
+    labourers.forEach(
+        (worker,index) => {
+
+
+        const row =
+            document.createElement("tr");
+
+
+        let actions = `
+
+            <button
+                class="blue action-btn"
+                onclick="
+                    saveDutyTime(
+                        ${worker.id}
+                    )
+                "
+            >
+                Save Duty
+            </button>
+
+        `;
+
+
+        if(
+            currentUser.role === "Admin"
+        ){
+
+            actions += `
+
+                <button
+                    class="danger action-btn"
+                    onclick="
+                        deleteLabourer(
+                            ${worker.id}
+                        )
+                    "
+                >
+                    Delete
+                </button>
+
+            `;
+
+        }
+
+
+        row.innerHTML = `
+
+        <td>
+            ${index+1}
+        </td>
+
+        <td>
+            <b>
+                ${escapeHTML(worker.name)}
+            </b>
+        </td>
+
+        <td>
+            ${escapeHTML(worker.role)}
+        </td>
+
+        <td>
+            ${worker.building}
+        </td>
+
+        <td>
+            ${escapeHTML(
+                worker.phone || "-"
+            )}
+        </td>
+
+        <td>
+
+            <input
+                type="time"
+                id="dutyStart-${worker.id}"
+                value="${
+                    worker.dutyStart || "06:00"
+                }"
+            >
+
+        </td>
+
+        <td>
+
+            <input
+                type="time"
+                id="dutyEnd-${worker.id}"
+                value="${
+                    worker.dutyEnd || "14:00"
+                }"
+            >
+
+        </td>
+
+        <td>
+            ${actions}
+        </td>
+
+        `;
+
+
+        table.appendChild(row);
+
+    });
+
+}
+
+
+/* =========================================================
+   SAVE DUTY TIME
+========================================================= */
+
+function saveDutyTime(id){
+
+    const worker =
+        labourers.find(
+            w =>
+                w.id === id
+        );
+
+
+    if(!worker){
+        return;
+    }
+
+
+    const start =
+        document
+        .getElementById(
+            `dutyStart-${id}`
+        )
+        .value;
+
+
+    const end =
+        document
+        .getElementById(
+            `dutyEnd-${id}`
+        )
+        .value;
+
+
+    if(!start || !end){
+
+        alert(
+            "Please enter both duty times."
+        );
+
+        return;
+
+    }
+
+
+    worker.dutyStart =
+        start;
+
+
+    worker.dutyEnd =
+        end;
+
+
+    saveData();
+
+
+    alert(
+        "Duty time updated successfully."
+    );
+
+
+    loadAttendance();
+
+}
+
+
+/* =========================================================
+   DELETE LABOURER
+========================================================= */
+
+function deleteLabourer(id){
+
+    if(
+        currentUser.role !== "Admin"
+    ){
+
+        alert(
+            "Only Admin can delete labourers."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        !confirm(
+            "Delete this labourer?"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    labourers =
+        labourers.filter(
+            worker =>
+                worker.id !== id
+        );
+
+
+    attendance =
+        attendance.filter(
+            record =>
+                record.workerId !== id
+        );
+
+
+    saveData();
+
+
+    renderLabourers();
+
+    loadAttendance();
+
+    updateDashboard();
+
+    updateReports();
+
+    updateBuildingCounts();
+
+}
+
+
+/* =========================================================
+   ATTENDANCE LOAD
+========================================================= */
+
+function loadAttendance(){
+
+    const date =
+        document
+        .getElementById(
+            "attendanceDate"
+        )
+        .value;
+
+
+    const building =
+        document
+        .getElementById(
+            "attendanceBuilding"
+        )
+        .value;
+
+
+    const role =
+        document
+        .getElementById(
+            "attendanceRole"
+        )
+        .value;
+
+
+    const table =
+        document
+        .getElementById(
+            "attendanceTable"
+        );
+
+
+    const summary =
+        document
+        .getElementById(
+            "filterSummary"
+        );
+
+
+    table.innerHTML = "";
+
+
+    let workers =
+        labourers.filter(
+            worker =>
+                worker.building ===
+                building
+        );
+
+
+    if(role !== "All"){
+
+        workers =
+            workers.filter(
+                worker =>
+                    worker.role ===
+                    role
+            );
+
+    }
+
+
+    summary.textContent =
+        building +
+        " → " +
+        (
+            role === "All"
+            ? "All Labourers"
+            : role
+        ) +
+        " → " +
+        workers.length +
+        " Labourers";
+
+
+    workers.forEach(
+        (worker,index) => {
+
+
+        const record =
+            attendance.find(
+                item =>
+                    item.workerId ===
+                    worker.id &&
+                    item.date ===
+                    date
+            );
+
+
+        const status =
+            record
+            ? record.status
+            : "";
+
+
+        let inTime =
+            record
+            ? record.inTime
+            : "";
+
+
+        let outTime =
+            record
+            ? record.outTime
+            : "";
+
+
+        let dutyCount =
+            record
+            ? record.dutyCount
+            : "";
+
+
+        const ot =
+            record
+            ? record.ot
+            : "0";
+
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+        <td>
+            ${index+1}
+        </td>
+
+
+        <td>
+            <b>
+                ${escapeHTML(
+                    worker.name
+                )}
+            </b>
+        </td>
+
+
+        <td>
+            ${escapeHTML(
+                worker.role
+            )}
+        </td>
+
+
+        <td>
+
+            <select
+                class="attendance-status"
+                data-worker="${worker.id}"
+                onchange="
+                    statusChanged(
+                        ${worker.id}
+                    )
+                "
+            >
+
+                <option
+                    value=""
+                    ${status === ""
+                    ? "selected"
+                    : ""}
+                >
+                    Select
+                </option>
+
+
+                <option
+                    value="P"
+                    ${status === "P"
+                    ? "selected"
+                    : ""}
+                >
+                    P - Present
+                </option>
+
+
+                <option
+                    value="A"
+                    ${status === "A"
+                    ? "selected"
+                    : ""}
+                >
+                    A - Absent
+                </option>
+
+
+                <option
+                    value="HD"
+                    ${status === "HD"
+                    ? "selected"
+                    : ""}
+                >
+                    HD - Half Day
+                </option>
+
+
+                <option
+                    value="P1/2"
+                    ${status === "P1/2"
+                    ? "selected"
+                    : ""}
+                >
+                    P1/2 - Present 1½
+                </option>
+
+
+                <option
+                    value="PP"
+                    ${status === "PP"
+                    ? "selected"
+                    : ""}
+                >
+                    PP - Present + Permission
+                </option>
+
+
+                <option
+                    value="2D"
+                    ${status === "2D"
+                    ? "selected"
+                    : ""}
+                >
+                    2D - 2 Days
+                </option>
+
+            </select>
+
+        </td>
+
+
+        <td>
+
+            <input
+                class="in-time"
+                data-worker="${worker.id}"
+                type="time"
+                value="${inTime}"
+            >
+
+        </td>
+
+
+        <td>
+
+            <input
+                class="out-time"
+                data-worker="${worker.id}"
+                type="time"
+                value="${outTime}"
+            >
+
+        </td>
+
+
+        <td>
+
+            <b
+                id="duty-${worker.id}"
+            >
+                ${dutyCount || "-"}
+            </b>
+
+        </td>
+
+
+        <td>
+
+            <input
+                class="ot-input"
+                data-worker="${worker.id}"
+                type="number"
+                min="0"
+                step="0.5"
+                value="${ot}"
+                placeholder="Manual OT"
+            >
+
+        </td>
+
+
+        <td>
+
+            <button
+                class="success action-btn"
+                onclick="
+                    saveOneAttendance(
+                        ${worker.id}
+                    )
+                "
+            >
+                Save
+            </button>
+
+        </td>
+
+        `;
+
+
+        table.appendChild(row);
+
+    });
+
+}
+
+
+/* =========================================================
+   STATUS CHANGED
+========================================================= */
+
+function statusChanged(
+    workerId
+){
+
+    const statusSelect =
+        document.querySelector(
+            `.attendance-status[data-worker="${workerId}"]`
+        );
+
+
+    const inInput =
+        document.querySelector(
+            `.in-time[data-worker="${workerId}"]`
+        );
+
+
+    const outInput =
+        document.querySelector(
+            `.out-time[data-worker="${workerId}"]`
+        );
+
+
+    const dutyDisplay =
+        document.getElementById(
+            `duty-${workerId}`
+        );
+
+
+    const status =
+        statusSelect.value;
+
+
+    /*
+       AUTOMATIC TIME
+    */
+
+    switch(status){
+
+        case "P":
+
+            inInput.value =
+                "06:00";
+
+            outInput.value =
+                "14:00";
+
+            dutyDisplay.textContent =
+                "1 Day";
+
+            break;
+
+
+        case "PP":
+
+            inInput.value =
+                "06:00";
+
+            outInput.value =
+                "14:00";
+
+            dutyDisplay.textContent =
+                "1 Day";
+
+            break;
+
+
+        case "P1/2":
+
+            inInput.value =
+                "06:00";
+
+            outInput.value =
+                "18:00";
+
+            dutyDisplay.textContent =
+                "1.5 Days";
+
+            break;
+
+
+        case "HD":
+
+            inInput.value =
+                "06:00";
+
+            outInput.value =
+                "10:00";
+
+            dutyDisplay.textContent =
+                "0.5 Day";
+
+            break;
+
+
+        case "2D":
+
+            inInput.value =
+                "06:00";
+
+            outInput.value =
+                "22:00";
+
+            dutyDisplay.textContent =
+                "2 Days";
+
+            break;
+
+
+        case "A":
+
+            inInput.value =
+                "";
+
+            outInput.value =
+                "";
+
+            dutyDisplay.textContent =
+                "0 Day";
+
+            break;
+
+
+        default:
+
+            inInput.value =
+                "";
+
+            outInput.value =
+                "";
+
+            dutyDisplay.textContent =
+                "-";
+
+    }
+
+}
+
+
+/* =========================================================
+   DUTY COUNT FROM STATUS
+========================================================= */
+
+function getDutyCountFromStatus(
+    status
+){
+
+    switch(status){
+
+        case "P":
+            return "1 Day";
+
+        case "PP":
+            return "1 Day";
+
+        case "HD":
+            return "0.5 Day";
+
+        case "P1/2":
+            return "1.5 Days";
+
+        case "2D":
+            return "2 Days";
+
+        case "A":
+            return "0 Day";
+
+        default:
+            return "0 Day";
+
+    }
+
+}
+
+
+/* =========================================================
+   SAVE ONE ATTENDANCE
+========================================================= */
+
+function saveOneAttendance(
+    workerId
+){
+
+    const date =
+        document
+        .getElementById(
+            "attendanceDate"
+        )
+        .value;
+
+
+    const building =
+        document
+        .getElementById(
+            "attendanceBuilding"
+        )
+        .value;
+
+
+    const status =
+        document.querySelector(
+            `.attendance-status[data-worker="${workerId}"]`
+        ).value;
+
+
+    if(!status){
+
+        alert(
+            "Please select attendance status."
+        );
+
+        return;
+
+    }
+
+
+    const inTime =
+        document.querySelector(
+            `.in-time[data-worker="${workerId}"]`
+        ).value;
+
+
+    const outTime =
+        document.querySelector(
+            `.out-time[data-worker="${workerId}"]`
+        ).value;
+
+
+    const otInput =
+        document.querySelector(
+            `.ot-input[data-worker="${workerId}"]`
+        );
+
+
+    let ot =
+        Number(
+            otInput.value || 0
+        );
+
+
+    if(ot < 0){
+        ot = 0;
+    }
+
+
+    /*
+       Duty is based on status.
+    */
+
+    const dutyCount =
+        getDutyCountFromStatus(
+            status
+        );
+
+
+    const existing =
+        attendance.find(
+            record =>
+                record.workerId ===
+                workerId &&
+                record.date ===
+                date
+        );
+
+
+    if(existing){
+
+        existing.status =
+            status;
+
+        existing.inTime =
+            inTime;
+
+        existing.outTime =
+            outTime;
+
+        existing.dutyCount =
+            dutyCount;
+
+        existing.ot =
+            ot;
+
+        existing.building =
+            building;
+
+    }
+    else{
+
+        attendance.push({
+
+            workerId:
+                workerId,
+
+            date:
+                date,
+
+            building:
+                building,
+
+            status:
+                status,
+
+            inTime:
+                inTime,
+
+            outTime:
+                outTime,
+
+            dutyCount:
+                dutyCount,
+
+            ot:
+                ot
+
+        });
+
+    }
+
+
+    saveData();
+
+
+    updateDashboard();
+
+    updateReports();
+
+    generateWeekly();
+
+
+    alert(
+        "Attendance saved successfully."
+    );
+
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+function updateDashboard(){
+
+    document
+    .getElementById(
+        "totalLabourers"
+    )
+    .textContent =
+        labourers.length;
+
+
+    const today =
+        getDateString();
+
+
+    const records =
+        attendance.filter(
+            record =>
+                record.date ===
+                today
+        );
+
+
+    const present =
+        records.filter(
+            record =>
+                record.status === "P" ||
+                record.status === "PP" ||
+                record.status === "P1/2" ||
+                record.status === "2D"
+        ).length;
+
+
+    const absent =
+        records.filter(
+            record =>
+                record.status === "A"
+        ).length;
+
+
+    const ot =
+        records.reduce(
+            (sum,record) =>
+                sum +
+                Number(
+                    record.ot || 0
+                ),
+            0
+        );
+
+
+    document
+    .getElementById(
+        "presentToday"
+    )
+    .textContent =
+        present;
+
+
+    document
+    .getElementById(
+        "absentToday"
+    )
+    .textContent =
+        absent;
+
+
+    document
+    .getElementById(
+        "otToday"
+    )
+    .textContent =
+        ot.toFixed(2);
+
+
+    const table =
+        document
+        .getElementById(
+            "dashboardTable"
+        );
+
+
+    table.innerHTML = "";
+
+
+    records.forEach(
+        record => {
+
+
+        const worker =
+            labourers.find(
+                w =>
+                    w.id ===
+                    record.workerId
+            );
+
+
+        if(!worker){
+            return;
+        }
+
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+        <td>
+            ${escapeHTML(
+                worker.name
+            )}
+        </td>
+
+        <td>
+            ${escapeHTML(
+                worker.role
+            )}
+        </td>
+
+        <td>
+            ${record.building}
+        </td>
+
+        <td>
+            ${statusLabel(
+                record.status
+            )}
+        </td>
+
+        <td>
+            ${record.inTime || "-"}
+        </td>
+
+        <td>
+            ${record.outTime || "-"}
+        </td>
+
+        <td>
+            ${record.dutyCount || "-"}
+        </td>
+
+        <td>
+            ${record.ot || "0"}
+        </td>
+
+        `;
+
+
+        table.appendChild(row);
+
+    });
+
+}
+
+
+/* =========================================================
+   STATUS LABEL
+========================================================= */
+
+function statusLabel(
+    status
+){
+
+    const labels = {
+
+        "P":
+        '<span class="status-P">P - Present</span>',
+
+        "A":
+        '<span class="status-A">A - Absent</span>',
+
+        "HD":
+        '<span class="status-HD">HD - Half Day</span>',
+
+        "P1/2":
+        '<span class="status-P12">P1/2 - Present 1½</span>',
+
+        "PP":
+        '<span class="status-PP">PP - Present + Permission</span>',
+
+        "2D":
+        '<span class="status-2D">2D - 2 Days</span>'
+
+    };
+
+
+    return (
+        labels[status] ||
+        status
+    );
+
+}
+
+
+/* =========================================================
+   BUILDING COUNTS
+========================================================= */
+
+function updateBuildingCounts(){
+
+    for(
+        let i=1;
+        i<=3;
+        i++
+    ){
+
+        const count =
+            labourers.filter(
+                worker =>
+                    worker.building ===
+                    `Building ${i}`
+            ).length;
+
+
+        const element =
+            document.getElementById(
+                `building${i}Count`
+            );
+
+
+        if(element){
+
+            element.textContent =
+                count +
+                " Labourers";
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   WEEKLY SHEET
+========================================================= */
+
+function generateWeekly(){
+
+    const startValue =
+        document
+        .getElementById(
+            "weekStart"
+        )
+        .value;
+
+
+    const building =
+        document
+        .getElementById(
+            "weeklyBuilding"
+        )
+        .value;
+
+
+    if(!startValue){
+        return;
+    }
+
+
+    const start =
+        new Date(
+            startValue +
+            "T00:00:00"
+        );
+
+
+    const workers =
+        labourers.filter(
+            worker =>
+                worker.building ===
+                building
+        );
+
+
+    const head =
+        document
+        .getElementById(
+            "weeklyHead"
+        );
+
+
+    const body =
+        document
+        .getElementById(
+            "weeklyBody"
+        );
+
+
+    let header =
+        "<tr><th>Labourer</th>";
+
+
+    for(
+        let i=0;
+        i<7;
+        i++
+    ){
+
+        const date =
+            new Date(start);
+
+
+        date.setDate(
+            start.getDate()+i
+        );
+
+
+        header +=
+            `<th>
+                ${date.getDate()}/
+                ${date.getMonth()+1}
+            </th>`;
+
+    }
+
+
+    header +=
+        "<th>Total OT</th>";
+
+
+    header +=
+        "</tr>";
+
+
+    head.innerHTML =
+        header;
+
+
+    body.innerHTML =
+        "";
+
+
+    workers.forEach(
+        worker => {
+
+
+        let row =
+            `<tr>
+                <td>
+                    <b>
+                    ${escapeHTML(
+                        worker.name
+                    )}
+                    </b>
+                </td>`;
+
+
+        let totalOT = 0;
+
+
+        for(
+            let i=0;
+            i<7;
+            i++
+        ){
+
+            const date =
+                new Date(start);
+
+
+            date.setDate(
+                start.getDate()+i
+            );
+
+
+            const dateString =
+                getDateString(date);
+
+
+            const record =
+                attendance.find(
+                    item =>
+                        item.workerId ===
+                        worker.id &&
+                        item.date ===
+                        dateString
+                );
+
+
+            if(record){
+
+                row +=
+                    `<td>
+                        ${statusLabel(
+                            record.status
+                        )}
+
+                        <br>
+
+                        <small>
+                            Duty:
+                            ${
+                                record.dutyCount
+                                || "-"
+                            }
+                        </small>
+
+                        <br>
+
+                        <small>
+                            OT:
+                            ${
+                                record.ot
+                                || "0"
+                            }
+                        </small>
+
+                    </td>`;
+
+
+                totalOT +=
+                    Number(
+                        record.ot || 0
+                    );
+
+            }
+            else{
+
+                row +=
+                    "<td>-</td>";
+
+            }
+
+        }
+
+
+        row +=
+            `<td>
+                <b>
+                    ${totalOT.toFixed(2)}
+                </b>
+            </td>
+            </tr>`;
+
+
+        body.innerHTML +=
+            row;
+
+    });
+
+}
+
+
+/* =========================================================
+   REPORTS
+========================================================= */
+
+function updateReports(){
+
+    const present =
+        attendance.filter(
+            record =>
+                record.status === "P" ||
+                record.status === "PP" ||
+                record.status === "P1/2" ||
+                record.status === "2D"
+        ).length;
+
+
+    const absent =
+        attendance.filter(
+            record =>
+                record.status === "A"
+        ).length;
+
+
+    const half =
+        attendance.filter(
+            record =>
+                record.status === "HD"
+        ).length;
+
+
+    const totalOT =
+        attendance.reduce(
+            (sum,record) =>
+                sum +
+                Number(
+                    record.ot || 0
+                ),
+            0
+        );
+
+
+    document
+    .getElementById(
+        "reportPresent"
+    )
+    .textContent =
+        present;
+
+
+    document
+    .getElementById(
+        "reportAbsent"
+    )
+    .textContent =
+        absent;
+
+
+    document
+    .getElementById(
+        "reportHalf"
+    )
+    .textContent =
+        half;
+
+
+    document
+    .getElementById(
+        "reportOT"
+    )
+    .textContent =
+        totalOT.toFixed(2);
+
+}
+
+
+/* =========================================================
+   CSV EXPORT
+========================================================= */
+
+function exportCSV(){
+
+    let csv =
+        "Date,Labourer,Role,Building,Status,In Time,Out Time,Duty Count,OT Hours\n";
+
+
+    attendance.forEach(
+        record => {
+
+
+        const worker =
+            labourers.find(
+                w =>
+                    w.id ===
+                    record.workerId
+            );
+
+
+        if(!worker){
+            return;
+        }
+
+
+        csv +=
+            `"${record.date}",` +
+            `"${worker.name}",` +
+            `"${worker.role}",` +
+            `"${record.building}",` +
+            `"${record.status}",` +
+            `"${record.inTime || ""}",` +
+            `"${record.outTime || ""}",` +
+            `"${record.dutyCount || ""}",` +
+            `"${record.ot || 0}"\n`;
+
+    });
+
+
+    const blob =
+        new Blob(
+            [csv],
+            {
+                type:
+                    "text/csv;charset=utf-8;"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const link =
+        document.createElement("a");
+
+
+    link.href =
+        url;
+
+
+    link.download =
+        "BMJ_Attendance_Report.csv";
+
+
+    document.body.appendChild(link);
+
+
+    link.click();
+
+
+    document.body.removeChild(link);
+
+
+    URL.revokeObjectURL(url);
+
+}
+
+
+/* =========================================================
+   SAVE DATA
+========================================================= */
+
+function saveData(){
+
+    localStorage.setItem(
+        "bmjLabourers",
+        JSON.stringify(
+            labourers
+        )
+    );
+
+
+    localStorage.setItem(
+        "bmjAttendance",
+        JSON.stringify(
+            attendance
+        )
+    );
+
+}
+
+
+/* =========================================================
+   HTML ESCAPE
+========================================================= */
+
+function escapeHTML(
+    value
+){
+
+    return String(value)
+
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+</script>
+
+</body>
+</html>
